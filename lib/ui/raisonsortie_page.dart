@@ -1,17 +1,57 @@
+//import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:certificate_app/style/theme.dart' as Theme;
-import 'package:certificate_app/utils/bubble_indication_painter.dart';
-import 'package:certificate_app/ui/colors.dart';
-import 'package:certificate_app/ui/Qrpage.dart';
-import 'package:certificate_app/ui/details_raison.dart';
+import 'package:attestation/style/theme.dart' as Theme;
+import 'package:attestation/utils/bubble_indication_painter.dart';
+import 'package:attestation/ui/colors.dart';
+import 'package:attestation/ui/Qrpage.dart';
+//import 'package:attestation/ui/details_raison.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:intl/intl.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 /// rewrite with stateless widget and multitab scaffold (this will be the home menu)
+
+// data a partir de api et stats :
+class Data {
+  final String infected;
+  final String cured;
+  final String passed_away;
+  Data({this.infected,this.cured,this.passed_away});
+  /*
+  Data.empty(){
+    infected = "";
+    cured = "";
+    passed_away ="";
+  } */
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data( infected: json['countrydata'][0]['total_cases'].toString(),
+    cured: json['countrydata'][0]['total_recovered'].toString(),
+    passed_away: json['countrydata'][0]['total_deaths'].toString(),);
+  }
+
+}
+
+Future <Data> getdata() async{
+  String url = "https://api.thevirustracker.com/free-api?countryTotal=FR";
+  final response = await http.get(url);
+  //Data d = new Data.empty();
+  if (response.statusCode == 200){
+      //d.infected = response.body;
+      Data d =  Data.fromJson(json.decode(response.body));
+      return d;
+      //print ("test \t" + d.infected);
+      
+  } 
+  //print ("test here \t" +response.body);
+}
+
 class Raison {
   int icon;
   String  text;
@@ -70,11 +110,11 @@ void initState() {
             tabs: <Widget>[
               Tab(
                 icon: Icon(Icons.assignment),
-                text: 'Autorisations',
+                text: 'Attestation',
               ),
               Tab(
                 icon: Icon(Icons.info),
-                text: 'Bons pratiques',
+                text: 'Restez informé',
               ),
             ]),
       ),
@@ -101,13 +141,13 @@ void initState() {
                    Padding(
                       padding: EdgeInsets.only(top: 15.0),
                       child: Text(
-                        "Recommendation OMS",
+                        "Restez informé",
                         style: TextStyle(
                             color: Colors.black45,
                             fontSize: 13,
                             fontFamily: "WorkSansLight"),
                       )),
-                      
+                      Expanded(flex: 1, child: _news(context)),
                 ],
             ),
            
@@ -196,86 +236,94 @@ void initState() {
 
 //swiper news ends here : 
 
-  Widget _news(BuildContext context){
-    return Table(
-      defaultColumnWidth: FlexColumnWidth(10.0),
-      defaultVerticalAlignment: TableCellVerticalAlignment.top,
-      children: [
-        TableRow(
-          children:[
-            Text(''),
-            Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                TextSpan(
-                text: 'Monde',
-                style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20)),
-                ],
-                )
-               ),
-               Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                TextSpan(
-                text: 'Europe',
-                style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20)),
-                ],
-                )
-               ),
-               Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                TextSpan(
-                text: 'France',
-                style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20)),
-                ],
-                )
-               )
-          ]
+Widget _news(BuildContext context) {
+  return FutureBuilder<Data>(
+    future: getdata(), // a previously-obtained Future<String> or null
+    builder: (BuildContext context, AsyncSnapshot<Data> snapshot) {
+      List<Widget> children;
+      if (snapshot.hasData) {
+        print(snapshot.data);
+        children = <Widget>[
+                 Container(
+                  width: 380.0,
+                  height: 499.0,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            infoCard("Total infecté",snapshot.data.infected,context,Colors.red[300],),
+                            infoCard("Total guéris", snapshot.data.cured,context, Colors.teal[300]),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            infoCard( "Dècés", snapshot.data.passed_away,context,Colors.black45,)
+                          ],
+                        ),
+                      ),
+                      
+                    ]
+                  )
+                    
+                
+                    )
+          /*
+          Icon(
+            Icons.check_circle_outline,
+            color: Colors.green,
+            size: 60,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text('Result: ${snapshot.data.cured}'),
+          ) */
+        ];
+      } else if (snapshot.hasError) {
+        children = <Widget>[
+          Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: 60,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text('Error: ${snapshot.error}'),
+          )
+        ];
+      } else {
+        children = <Widget>[
+          SizedBox(
+            child: CircularProgressIndicator(),
+            width: 60,
+            height: 60,
+          ),
+          const Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: Text('Awaiting result...'),
+          )
+        ];
+      }
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: children,
         ),
-        TableRow(children: [
-          Text(''),Text(''),Text(''),Text('')
-        ]),
-        TableRow(
-          children:[
-            Text('Infections'),
-            Text('12345'),
-            Text('12345'),
-            Text('12345')
-          ]
-        ),
-        TableRow(children: [
-          Text(''),Text(''),Text(''),Text('')
-        ]),
-        TableRow(
-          children:[
-            Text('Guérisons'),
-            Text('12345'),
-            Text('12345'),
-            Text('12345')
-          ]
-        ),
-        TableRow(children: [
-          Text(''),Text(''),Text(''),Text('')
-        ]),
-        TableRow(
-          children:[
-            Text('Morts'),
-            Text('12345'),
-            Text('12345'),
-            Text('12345')
-          ]
-        )
-      ]
-    );
-  }
-  
+      );
+    },
+  );
+}
   Widget _buildSignIn(BuildContext context) {
     String name = widget.name;
     return Container(
@@ -381,22 +429,6 @@ void initState() {
     final _media = MediaQuery.of(context).size;
     return GestureDetector(
         onTap: () {_onAlertWithCustomContentPressed(context,card_number,date,time);}
-        /*
-        {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DetailsPage(
-                  // to pass the paramettres from the login form to the object ! 
-                      name : name,
-                      bday : bday,
-                      bplace : bplace,
-                      adresse : adresse,
-                      card_number: card_number,
-                    )),
-          );
-          print(name);
-        } */
         ,
         child: Container(
           margin: EdgeInsets.only(top: 18, right: 12),
@@ -430,4 +462,109 @@ void initState() {
           ),
         ));
   }
+  // card to display information and updates from the stats API
+
+    Widget infoCard(String title,String data,BuildContext context, Color color) {
+    final _media = MediaQuery.of(context).size;
+    return  Container(
+          margin: EdgeInsets.only(top: 18, right: 12),
+          padding: EdgeInsets.all(25),
+          height: screenAwareSize(100, context),
+          width: _media.width / 2 - 43,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(17),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+               title,
+               style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  //fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+              Text(
+                data,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+  }
+
 }
+/*
+Container(
+                  width: 380.0,
+                  height: 515.0,
+                  child:FutureBuilder<Data>(
+                    future: getdata(),
+                    builder: (context,snapshot){
+                       List<Widget> children;
+                      if (snapshot.hasData){
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            infoCard("Total infecté","3256",context,Colors.red[300],),
+                            infoCard("Total guéris", "59476",context, Colors.teal[300]),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            infoCard( "Dècés", "58696",context,Colors.black45,)
+                          ],
+                        ),
+                      ),
+                    ];
+                
+                      }else{
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            infoCard("Total infecté","3256",context,Colors.red[300],),
+                            infoCard("Total guéris", "59476",context, Colors.teal[300]),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 20,
+                          top: 0,
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            infoCard( "Dècés", "58696",context,Colors.black45,)
+                          ],
+                        ),
+                      ),
+                    ];
+                  
+                      }
+                    },
+                    ) // feature builder here !
+                ) */

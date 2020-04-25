@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:certificate_app/ui/login_page.dart';
+import 'package:attestation/ui/login_page.dart';
 
 void main() => runApp(new MyApp());
 

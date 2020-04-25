@@ -5,8 +5,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:certificate_app/ui/colors.dart';
-import 'package:certificate_app/style/theme.dart' as Theme;
+import 'package:attestation/ui/colors.dart';
+import 'package:attestation/style/theme.dart' as Theme;
 
 /// the classe ofor the reason of going out ! 
 class Sortie {

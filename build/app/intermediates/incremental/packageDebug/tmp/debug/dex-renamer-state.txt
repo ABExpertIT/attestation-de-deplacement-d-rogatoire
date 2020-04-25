@@ -1,4 +1,0 @@
-#Sun Apr 05 09:54:10 CEST 2020
-base.0=C\:\\Users\\zakar\\OneDrive\\Documents\\TheGorgeousLogin\\build\\app\\intermediates\\transforms\\dexMerger\\debug\\0
-path.0=classes.dex
-renamed.0=classes.dex

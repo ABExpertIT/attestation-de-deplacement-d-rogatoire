@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:certificate_app/style/theme.dart' as Theme;
-import 'package:certificate_app/ui/raisonsortie_page.dart';
+import 'package:attestation/style/theme.dart' as Theme;
+import 'package:attestation/ui/raisonsortie_page.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
