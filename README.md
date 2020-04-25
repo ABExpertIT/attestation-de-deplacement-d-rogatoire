@@ -1,6 +1,5 @@
 #derogatory-travel-certificate
- app to generate the derogatory travel certificate and get updates from trusted resources about the situation of covid19.
-The [The Virus Tracker API](https://thevirustracker.com/api) was used to provide the data.
+ app to generate the derogatory travel certificate and get updates from trusted resources about the situation of covid19.[The Virus Tracker API](https://thevirustracker.com/api) was used to provide the data.
 
 ## Requirements
 * Any Operating System (i.e MacOS X, Linux, Windows)
