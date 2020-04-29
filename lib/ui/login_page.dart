@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:attestation/style/theme.dart' as Theme;
 import 'package:attestation/ui/raisonsortie_page.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 //initializeDateFormatting("fr_FR", null).then((_) => runMyCode());
@@ -120,8 +118,6 @@ getTextInputData(){
                       colors: [
                         Colors.teal,
                         Colors.teal,
-                        //Theme.Colors.loginGradientStart,
-                        //Theme.Colors.loginGradientEnd
                       ],
                       begin: const FractionalOffset(0.0, 0.0),
                       end: const FractionalOffset(1.0, 1.0),
@@ -378,9 +374,7 @@ getTextInputData(){
                 ),
                 child: 
                 FlatButton(
-                    //highlightColor: Colors.transparent,
-                    //splashColor: Colors.black,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 42.0),
@@ -395,13 +389,9 @@ getTextInputData(){
                     onPressed: () {
                       //print(bday.year);
                       getTextInputData();
-                      //print(name);
-                      //print(adresse);
-                      //print(bday);
                      
                       
                       }
-                        //showInSnackBar("SignUp button pressed")),
               ),
               )
             ],

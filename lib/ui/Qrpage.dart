@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:attestation/ui/colors.dart';
-import 'package:attestation/style/theme.dart' as Theme;
 
 /// the classe ofor the reason of going out ! 
 class Sortie {
@@ -95,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
                       children: <Widget>[
                         const ListTile(
                           title: Text('Qr code'),
-                          subtitle: Text('\nVous devez présenter ce QR code en cas de control pat des agents de la police'),
+                          subtitle: Text('\nVous devez présenter ce QR-Code en cas de contrôle'),
                           )
                       ],
                     ),
@@ -126,7 +123,8 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<ui.Image> _loadOverlayImage() async {
     final completer = Completer<ui.Image>();
-    final byteData = await rootBundle.load('assets/img/4.0x/logo_yakka.png');
+    //add an image to display on the top of the QRcode
+    final byteData = await rootBundle.load('');
     ui.decodeImageFromList(byteData.buffer.asUint8List(), completer.complete);
     return completer.future;
   }

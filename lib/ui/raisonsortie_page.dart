@@ -1,24 +1,15 @@
 //import 'dart:js';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:attestation/style/theme.dart' as Theme;
-import 'package:attestation/utils/bubble_indication_painter.dart';
-import 'package:attestation/ui/colors.dart';
 import 'package:attestation/ui/Qrpage.dart';
 //import 'package:attestation/ui/details_raison.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:intl/intl.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-/// rewrite with stateless widget and multitab scaffold (this will be the home menu)
 
-// data a partir de api et stats :
 class Data {
   final String infected;
   final String cured;
@@ -41,15 +32,10 @@ class Data {
 Future <Data> getdata() async{
   String url = "https://api.thevirustracker.com/free-api?countryTotal=FR";
   final response = await http.get(url);
-  //Data d = new Data.empty();
   if (response.statusCode == 200){
-      //d.infected = response.body;
       Data d =  Data.fromJson(json.decode(response.body));
-      return d;
-      //print ("test \t" + d.infected);
-      
+      return d;  
   } 
-  //print ("test here \t" +response.body);
 }
 
 class Raison {
@@ -63,7 +49,7 @@ List<Raison> list_raison = [Raison(0, 'Title', 'more details'),
 Raison(59640, 'Je dois aller travailler', ''),
 Raison(59476, 'Je vais acheter à manger ou des médicaments', 'La durée de votre déplacement ne doit pas dépasser 1h'),
 Raison(58696, 'Je dois aller chez le médecin', ''),
-Raison(59700, 'Je dois aller aider des gens agés, handicapés ou garder des enfants', ''),
+Raison(59700, 'Je dois aller aider des personnes agées, handicapés ou garder des enfants', ''),
 Raison(58726, 'Je dois aller courir seul ou promener mon chien', 'La durée de votre déplacement ne doit pas dépasser 1h'),
 Raison(59615, 'Je suis convoqué(e) par une administration ou la justice', ''),
 Raison(58826, 'Je fais une mission utile à tous sur demande de l\'administration', '')
@@ -97,9 +83,6 @@ void initState() {
             backgroundColor: Colors.teal,
           ),
       bottomNavigationBar: 
-      /// new one starts here
-      /// new one ends here 
-       /// old buttom navigation bar starts here
       Material(
         color: Colors.white,
         child: TabBar(
@@ -133,7 +116,7 @@ void initState() {
                             fontSize: 13,
                             fontFamily: "WorkSansLight"),
                       )),
-                      Expanded(flex: 1, child: _buildSignIn(context)),
+                      Expanded(flex: 1, child: _raison_sortie(context)),
                 ],
             ),
                Column(
@@ -147,7 +130,7 @@ void initState() {
                             fontSize: 13,
                             fontFamily: "WorkSansLight"),
                       )),
-                      Expanded(flex: 1, child: _news(context)),
+                      Expanded(flex: 1, child: _stats(context)),
                 ],
             ),
            
@@ -221,7 +204,7 @@ void initState() {
                     ),
                   );
             //additional stuff can be add here 
-            // like sending the data to  external an external data base
+            // like sending the data to  external data base
 
             },
             child: Text(
@@ -236,7 +219,7 @@ void initState() {
 
 //swiper news ends here : 
 
-Widget _news(BuildContext context) {
+Widget _stats(BuildContext context) {
   return FutureBuilder<Data>(
     future: getdata(), // a previously-obtained Future<String> or null
     builder: (BuildContext context, AsyncSnapshot<Data> snapshot) {
@@ -278,16 +261,7 @@ Widget _news(BuildContext context) {
                     
                 
                     )
-          /*
-          Icon(
-            Icons.check_circle_outline,
-            color: Colors.green,
-            size: 60,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text('Result: ${snapshot.data.cured}'),
-          ) */
+
         ];
       } else if (snapshot.hasError) {
         children = <Widget>[
@@ -324,7 +298,7 @@ Widget _news(BuildContext context) {
     },
   );
 }
-  Widget _buildSignIn(BuildContext context) {
+  Widget _raison_sortie(BuildContext context) {
     String name = widget.name;
     return Container(
       padding: EdgeInsets.only(top: 5.0),
@@ -367,7 +341,7 @@ Widget _news(BuildContext context) {
                               Colors.black45,
                             ),
                             colorCard(
-                                "Aider des gens agés/handicapés / enfants ",
+                                "Aider des personnes agées/handicapées/enfants ",
                                 59700,
                                 4,
                                 context,
@@ -383,7 +357,7 @@ Widget _news(BuildContext context) {
                         child: Row(
                           children: <Widget>[
                             colorCard(
-                              "Courir / promener mon chien",
+                              "Pratique sportive / Promener son animal de compagnie",
                               58726,
                               5,
                               context,
@@ -502,69 +476,3 @@ Widget _news(BuildContext context) {
   }
 
 }
-/*
-Container(
-                  width: 380.0,
-                  height: 515.0,
-                  child:FutureBuilder<Data>(
-                    future: getdata(),
-                    builder: (context,snapshot){
-                       List<Widget> children;
-                      if (snapshot.hasData){
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          top: 0,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            infoCard("Total infecté","3256",context,Colors.red[300],),
-                            infoCard("Total guéris", "59476",context, Colors.teal[300]),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          top: 0,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            infoCard( "Dècés", "58696",context,Colors.black45,)
-                          ],
-                        ),
-                      ),
-                    ];
-                
-                      }else{
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          top: 0,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            infoCard("Total infecté","3256",context,Colors.red[300],),
-                            infoCard("Total guéris", "59476",context, Colors.teal[300]),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          top: 0,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            infoCard( "Dècés", "58696",context,Colors.black45,)
-                          ],
-                        ),
-                      ),
-                    ];
-                  
-                      }
-                    },
-                    ) // feature builder here !
-                ) */
