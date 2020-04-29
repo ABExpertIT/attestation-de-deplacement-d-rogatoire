@@ -15,7 +15,7 @@ app to generate the derogatory travel certificate and get updates from trusted r
 - [x] See cases statistics in France.
 - [x] Generate the derogatory travel certificate (France templete).
 
-> - [x] Les statistique de covid19 en France.
+> - [x] Les statistiques de covid19 en France.
 > - [x] générer l'attestation de déplacement dérogatoire en Qr code.
 
 ## Screenshots
