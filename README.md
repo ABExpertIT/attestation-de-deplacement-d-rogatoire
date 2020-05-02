@@ -7,7 +7,7 @@ app to generate the derogatory travel certificate and get updates from trusted r
 
  ## Data sources : 
 
- https://doc.data.gouv.fr/api/intro/ (Official API od data gouv fr)
+ https://doc.data.gouv.fr/api/intro/ (Official API of data gouv fr)
 
  ## UI libs : 
 
