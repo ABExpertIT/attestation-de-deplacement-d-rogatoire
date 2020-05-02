@@ -1,6 +1,14 @@
 #derogatory-travel-certificate
  app to generate the derogatory travel certificate and get updates from trusted resources about the situation of covid19.[The Virus Tracker API](https://thevirustracker.com/api) was used to provide the data.
 
+ ## Data sources : 
+
+ https://doc.data.gouv.fr/api/intro/ (Official API od data gouv fr)
+
+ ## UI libs : 
+
+ https://docs.getflutter.dev/gf-rating
+
 ## Requirements
 * Any Operating System (i.e MacOS X, Linux, Windows)
 * Any IDE with Flutter SDK installed (ie. IntelliJ, Android Studio, VSCode etc)
