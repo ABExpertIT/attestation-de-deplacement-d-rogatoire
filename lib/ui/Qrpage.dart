@@ -4,28 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:attestation/ui/utils.dart';
 
-/// the classe ofor the reason of going out !
-class Sortie {
-  String name;
-  String bday;
-  String bplace;
-  String adresse;
-  String reason;
-  String date;
-  String time;
-  Sortie(this.name, this.bday, this.bplace, this.adresse, this.reason,
-      this.date, this.time);
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'birthday': bday,
-        'birth_place': bplace,
-        'adresse': adresse,
-        'reason': reason,
-        'date': date,
-        'time': time
-      };
-}
 
 class MainScreen extends StatefulWidget {
   String name, bday, bplace, adresse, reason, date, time;
