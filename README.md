@@ -5,13 +5,6 @@ app to generate the derogatory travel certificate and get updates from trusted r
 
 > Une application pour générer l'attestation de déplacement dérogatoire et obtenir des mises à jour de ressources fiables sur la situation de covid19 en France [l'API thevirus tracker] (https://thevirustracker.com/api) a été utilisée pour fournir les données.
 
- ## Data sources : 
-
- https://doc.data.gouv.fr/api/intro/ (Official API of data gouv fr)
-
- ## UI libs : 
-
- https://docs.getflutter.dev/gf-rating
 
 ## Requirements
 
@@ -23,9 +16,11 @@ app to generate the derogatory travel certificate and get updates from trusted r
 
 ## Features
 - [x] See cases statistics in France.
+- [x] Visit official websites to get the latest updates and news.
 - [x] Generate the derogatory travel certificate (France templete).
 
 > - [x] Les statistiques de covid19 en France.
+> - [x] Visitez les sites web officiels pour obtenir les dernières mises à jour et nouvelles.
 > - [x] générer l'attestation de déplacement dérogatoire en Qr code.
 
 ## Screenshots
@@ -42,10 +37,20 @@ app to generate the derogatory travel certificate and get updates from trusted r
 <img src="Screenshots/flutter_05.png" width="300" style="border-radius: 15px">
 </div>
 
+<div style="background-color:rgb(169,169,169); text-align:center">
+<img src="Screenshots/flutter_08.png" width="300" style="border-radius: 15px">
+&nbsp;
+<img src="Screenshots/flutter_09.png" width="300" style="border-radius: 15px">
+</div>
 
 <div style="background-color:rgb(169,169,169); text-align:center">
 <img src="Screenshots/flutter_06.png" width="300" style="border-radius: 15px">
 &nbsp;
 <img src="Screenshots/flutter_07.png" width="300" style="border-radius: 15px">
 </div>
+
+
+ ## UI libs : 
+ https://docs.getflutter.dev/gf-rating 
+
 

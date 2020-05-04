@@ -2,81 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:attestation/ui/Qrpage.dart';
-//import 'package:attestation/ui/details_raison.dart';
+import 'package:attestation/ui/webview.dart';
+//while testing
+import 'package:attestation/ui/test_webview.dart';
+import 'package:attestation/ui/utils.dart';
 import 'package:getflutter/getflutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
-class Info {
-  String title;
-  String info;
-  String info_1;
-  String info_2;
-  Info(this.title, this.info,this.info_1,this.info_2);
-}
-
-class Data {
-  final String infected;
-  final String infected_today;
-  final String active_cases;
-  final String cured;
-  final String passed_away;
-  final String passed_away_today;
-  Data({this.infected, this.infected_today,this.active_cases,this.cured, this.passed_away,this.passed_away_today});
-  /*
-  Data.empty(){
-    infected = "";
-    cured = "";
-    passed_away ="";
-  } */
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
-      infected: json['countrydata'][0]['total_cases'].toString(),
-      infected_today: json['countrydata'][0]['total_new_cases_today'].toString(),
-      active_cases: json['countrydata'][0]['total_active_cases'].toString(),
-      cured: json['countrydata'][0]['total_recovered'].toString(),
-      passed_away: json['countrydata'][0]['total_deaths'].toString(),
-      passed_away_today: json['countrydata'][0]['total_new_deaths_today'].toString(),
-    );
-  }
-}
-
-Future<Data> getdata() async {
-  String url = "https://api.thevirustracker.com/free-api?countryTotal=FR";
-  final response = await http.get(url);
-  if (response.statusCode == 200) {
-    Data d = Data.fromJson(json.decode(response.body));
-    return d;
-  }
-}
-
-class Raison {
-  int icon;
-  String text;
-  String more_text;
-  Raison(this.icon, this.text, this.more_text);
-}
-
-List<Raison> list_raison = [
-  Raison(0, 'Title', 'more details'),
-  Raison(59640, 'Je dois aller travailler', ''),
-  Raison(59476, 'Je vais acheter à manger ou des médicaments',
-      'La durée de votre déplacement ne doit pas dépasser 1h'),
-  Raison(58696, 'Je dois aller chez le médecin', ''),
-  Raison(
-      59700,
-      'Je dois aller aider des personnes agées, handicapés ou garder des enfants',
-      ''),
-  Raison(58726, 'Je dois aller courir seul ou promener mon chien',
-      'La durée de votre déplacement ne doit pas dépasser 1h'),
-  Raison(59615, 'Je suis convoqué(e) par une administration ou la justice', ''),
-  Raison(58826,
-      'Je fais une mission utile à tous sur demande de l\'administration', '')
-];
 
 class SecondPage extends StatefulWidget {
   String name, bday, bplace, adresse;
@@ -137,7 +71,7 @@ class _SecondPageState extends State<SecondPage>
               Padding(
                   padding: EdgeInsets.only(top: 15.0),
                   child: Text(
-                    "Restez informé",
+                    "Situation de covid19 en France et dans le monde",
                     style: TextStyle(
                         color: Colors.black45,
                         fontSize: 13,
@@ -182,7 +116,7 @@ class _SecondPageState extends State<SecondPage>
               color: Colors.teal,
             ),
 
-            Text(list_raison[card_number].text),
+            Text(list_raison[card_number].reason),
             Divider(
               color: Colors.black,
             ),
@@ -228,7 +162,7 @@ class _SecondPageState extends State<SecondPage>
                     adresse: adresse,
                     date: date,
                     time: time,
-                    reason: list_raison[card_number].text,
+                    reason: list_raison[card_number].reason,
                   ),
                 ),
               );
@@ -248,26 +182,51 @@ class _SecondPageState extends State<SecondPage>
 //swiper news ends here :
 
   Widget _stats(BuildContext context) {
-    return FutureBuilder<Data>(
+    return FutureBuilder<List<Data>>(
       future: getdata(), // a previously-obtained Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<Data> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<Data>> snapshot) {
         List<Widget> children;
         if (snapshot.hasData) {
           final List<Info> info = [
-            Info("Infectés", snapshot.data.infected,snapshot.data.infected_today,snapshot.data.active_cases),
-            Info("Guéris", snapshot.data.cured,"",""),
-            Info("Dècés", snapshot.data.passed_away,snapshot.data.passed_away_today,"")
+            Info(
+                "Infectés", // title
+                snapshot.data[0].infected, //fr_infected
+                snapshot.data[0].infected_today, //fr_infected_today
+                snapshot.data[0].active_cases, //fr_active_cases
+                snapshot.data[1].infected, //wr_infected
+                snapshot.data[1].infected_today, //wr_infected_today
+                snapshot.data[1].active_cases // wr_actrive_cases
+
+                ),
+            Info("Guéris", snapshot.data[0].cured, snapshot.data[1].cured, "",
+                "", "", ""),
+            Info(
+                "Dècés",
+                snapshot.data[0].passed_away,
+                snapshot.data[0].passed_away_today,
+                snapshot.data[1].passed_away,
+                snapshot.data[1].passed_away_today,
+                "",
+                "")
           ];
           //print(snapshot.data);
           children = <Widget>[
             GFCarousel(
               //rowCount: 3,
               enlargeMainPage: true,
-              pagination: true,
+              //pagination: true,
               passiveIndicator: Colors.teal,
               items: info.map(
                 (element) {
-                  return infoCard(element.title, element.info,element.info_1,element.info_2, context);
+                  return infoCard(
+                      element.title, // "infectes" or "gueries" or "deces"
+                      element.fr_data1, //fr_infected
+                      element.fr_data2, //fr_infected_today
+                      element.fr_data3, //fr_active_cases
+                      element.wr_data1,
+                      element.wr_data2,
+                      element.wr_data3,
+                      context);
                 },
               ).toList(),
             ),
@@ -302,31 +261,17 @@ class _SecondPageState extends State<SecondPage>
                 ])) */
           ];
         } else if (snapshot.hasError) {
-          /*
-          final List<Info>  info = [ Info("Infectés","12"),Info("Guéris","123"),Info("Dècés","1")];
-          GFItemsCarousel(
-            rowCount: 3,
-            children: info.map(
-              (element) {
-                return infoCard(element.title,element.info,context),
-                );
-              },
-            ).toList(),
-          );  */
-
-          // disabeling error while testing !
-          /*
-        children = <Widget>[
-          Icon(
-            Icons.error_outline,
-            color: Colors.red,
-            size: 60,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text('Error: ${snapshot.error}'),
-          )
-        ]; */
+          children = <Widget>[
+            Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 60,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Text('Error: ${snapshot.error}'),
+            )
+          ];
         } else {
           children = <Widget>[
             SizedBox(
@@ -337,16 +282,38 @@ class _SecondPageState extends State<SecondPage>
             const Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text('Merci de patienter ...'),
-            )
+            ),
           ];
         }
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        children.add(
+          Column(
+            children: <Widget>[
+              Text(" "),
+              Text(
+                "mises à jour de la presse",
+                style: TextStyle(
+                    color: Colors.black45,
+                    fontSize: 13,
+                    fontFamily: "WorkSansLight"),
+              ),
+              newsCard(list_source[0]),
+              newsCard(list_source[1]),
+              newsCard(list_source[2])
+            ],
+          ),
+        );
+        return Container(
+          width: 400.0,
+          height: 515.0,
+          child : Center(
+          child: Column(   
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: children,
           ),
+        ),
         );
+        
       },
     );
   }
@@ -488,10 +455,18 @@ class _SecondPageState extends State<SecondPage>
   }
   // card to display information and updates from the stats API
 
-  Widget infoCard(String title, String data,String data1,String data2, BuildContext context) {
+  Widget infoCard(
+      String title,
+      String fr_data1,
+      String fr_data2,
+      String fr_data3,
+      String wr_data1,
+      String wr_data2,
+      String wr_data3,
+      BuildContext context) {
     final _media = MediaQuery.of(context).size;
     Color color;
-    String title_2= " ";
+    String title_2 = " ";
     String text_today = "";
     //print(title);
     //print ("data1 : " + data1);
@@ -500,104 +475,338 @@ class _SecondPageState extends State<SecondPage>
       color = Colors.red[300];
       title_2 = "Cas actifs";
       text_today = "Aujourd\'hui( -- )";
+      return Container(
+        margin: EdgeInsets.only(top: 18, right: 12),
+        padding: EdgeInsets.all(25),
+        height: screenAwareSize(1, context),
+        width: _media.width,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(17),
+          image: DecorationImage(
+            image: new AssetImage('assets/img/corona.png'),
+            fit: BoxFit.cover,
+          ),
+          //fir : BoxFit.cover,
+        ),
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // france data goes here !
+            Center(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "France",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        //fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          fr_data1,
+                          style: TextStyle(
+                            fontSize: 21,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              "Aujourd\'hui :",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              "+${fr_data2}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            //GFBadge(
+                              //onPressed: () {},
+                              //color: Colors.black,
+                              //child: Text("+ ${fr_data2}"),
+                            //),
+                          ],
+                        ),
+                        Text(
+                          "Cas actifs :  ${fr_data3} \n ",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ]),
+                ]),
+
+            // global - world - data goes here
+
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Monde",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        //fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          wr_data1,
+                          style: TextStyle(
+                            fontSize: 21,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Aujourd\'hui : + ${wr_data2} ",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Cas actifs :  ${wr_data3} ",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ]),
+                ])
+          ],
+        ),
+      );
     } else if (title == "Guéris") {
       color = Colors.teal[300];
+      return Container(
+        margin: EdgeInsets.only(top: 18, right: 12),
+        padding: EdgeInsets.all(25),
+        height: screenAwareSize(1, context),
+        width: _media.width,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(17),
+          image: DecorationImage(
+            image: new AssetImage('assets/img/corona_cured.png'),
+            fit: BoxFit.cover,
+          ),
+          //fir : BoxFit.cover,
+        ),
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // france data goes here !
+            Center(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "France",
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.white,
+                        //fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${fr_data1} ",
+                    style: TextStyle(
+                      fontSize: 21,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ]),
+
+            // global - world - data goes here
+
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Monde",
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.white,
+                        //fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${fr_data2} ",
+                    style: TextStyle(
+                      fontSize: 21,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ])
+          ],
+        ),
+      );
     } else {
       color = Colors.black45;
-    }
-    return Container(
-      margin: EdgeInsets.only(top: 18, right: 12),
-      padding: EdgeInsets.all(25),
-      height: screenAwareSize(10, context),
-      width: _media.width,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(17),
-        image: DecorationImage(
-          image: new AssetImage('assets/img/corona.png'),
-          fit: BoxFit.cover,
-        ),
-        //fir : BoxFit.cover,
-      ),
-      child: Column(
-        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                  Text(
-                  title,
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                      //fontWeight: FontWeight.w500,
-                      fontWeight: FontWeight.bold),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                  
-                  Text(
-                    data,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                   Text(
-                    "Aujourd\'hui( + ${data1} )",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ]),
-              ]),
-          Text(
-            " ",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
+      return Container(
+        margin: EdgeInsets.only(top: 18, right: 12),
+        padding: EdgeInsets.all(25),
+        height: screenAwareSize(1, context),
+        width: _media.width,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(17),
+          image: DecorationImage(
+            image: new AssetImage('assets/img/corona.png'),
+            fit: BoxFit.cover,
           ),
-           Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                  Text(
-                  title_2,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      //fontWeight: FontWeight.bold
-                      ),
+          //fir : BoxFit.cover,
+        ),
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // france data goes here !
+            Center(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+              ),
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
                   Text(
-                    data2,
+                    "France",
                     style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
+                        fontSize: 22,
+                        color: Colors.white,
+                        //fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold),
                   ),
-                   Text(
-                   text_today,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          fr_data1,
+                          style: TextStyle(
+                            fontSize: 21,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Aujourd\'hui : + ${fr_data2} \n",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ]),
                 ]),
-              ])
-        ],
+
+            // global - world - data goes here
+
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Monde",
+                    style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.white,
+                        //fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          fr_data3,
+                          style: TextStyle(
+                            fontSize: 21,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          "Aujourd\'hui : + ${wr_data1} ",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ]),
+                ])
+          ],
+        ),
+      );
+    }
+  }
+
+  // the info card for the press datra
+  Widget newsCard(Source s) {
+    // you can simple remove the gesture detector and use the on tap property in listTile
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => WebViewSource(url: s.url,)));
+      },
+      child: Card(
+        child: ListTile(
+          leading: Image.network(
+            s.image_url,
+          ),
+          title: Text(s.title),
+          subtitle: Text(s.description),
+          //trailing: Icon(Icons.more_vert),
+        ),
       ),
     );
   }
