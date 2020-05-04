@@ -48,7 +48,3 @@ app to generate the derogatory travel certificate and get updates from trusted r
 </div>
 
 
- ## UI libs : 
- https://docs.getflutter.dev/gf-rating 
-
-
