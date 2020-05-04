@@ -23,7 +23,7 @@ dev_dependencies:
   flutter_swiper: ^1.1.6
   rflutter_alert: ^1.0.3
   google_nav_bar: ^2.1.0
-  webview_flutter: ^0.1.1
+  webview_flutter: ^0.3.21
   url_launcher: ^4.0.2
   #dio: ^3.0.9
   getflutter: ^1.0.11

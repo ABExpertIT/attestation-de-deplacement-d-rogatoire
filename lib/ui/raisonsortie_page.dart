@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:attestation/ui/Qrpage.dart';
 import 'package:attestation/ui/webview.dart';
+//while testing
+import 'package:attestation/ui/test_webview.dart';
 import 'package:attestation/ui/utils.dart';
 import 'package:getflutter/getflutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -294,19 +296,24 @@ class _SecondPageState extends State<SecondPage>
                     fontSize: 13,
                     fontFamily: "WorkSansLight"),
               ),
-              GFButton(onPressed: () {
-                Navigator.push(context,MaterialPageRoute(builder: (context) => WikipediaExplorer()));
-              }, text: "primary"),
+              newsCard(list_source[0]),
+              newsCard(list_source[1]),
+              newsCard(list_source[2])
             ],
           ),
         );
-        return Center(
-          child: Column(
+        return Container(
+          width: 400.0,
+          height: 515.0,
+          child : Center(
+          child: Column(   
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: children,
           ),
+        ),
         );
+        
       },
     );
   }
@@ -529,11 +536,19 @@ class _SecondPageState extends State<SecondPage>
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            GFBadge(
-                              //onPressed: () {},
-                              color: Colors.black,
-                              child: Text("+ ${fr_data2}"),
+                            Text(
+                              "+${fr_data2}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
+                            //GFBadge(
+                              //onPressed: () {},
+                              //color: Colors.black,
+                              //child: Text("+ ${fr_data2}"),
+                            //),
                           ],
                         ),
                         Text(
@@ -773,5 +788,26 @@ class _SecondPageState extends State<SecondPage>
         ),
       );
     }
+  }
+
+  // the info card for the press datra
+  Widget newsCard(Source s) {
+    // you can simple remove the gesture detector and use the on tap property in listTile
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => WebViewSource(url: s.url,)));
+      },
+      child: Card(
+        child: ListTile(
+          leading: Image.network(
+            s.image_url,
+          ),
+          title: Text(s.title),
+          subtitle: Text(s.description),
+          //trailing: Icon(Icons.more_vert),
+        ),
+      ),
+    );
   }
 }

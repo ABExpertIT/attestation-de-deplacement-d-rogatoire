@@ -21,6 +21,20 @@ class Info {
     );
 }
 
+class Source {
+  String title;
+  String description;
+  String image_url;
+  String url;
+
+  Source(
+    this.title,
+    this.description,
+    this.image_url,
+    this.url
+  );
+}
+
 class Data {
   final String infected;
   final String infected_today;
@@ -103,6 +117,19 @@ List<Raison> list_raison = [
   Raison(58826,
       'Je fais une mission utile à tous sur demande de l\'administration', '')
 ];
+
+ List<Source> list_source = [
+   Source("OMS", "organisation mondiale de la santé", 
+   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_the_United_Nations.svg/1200px-Flag_of_the_United_Nations.svg.png", 
+   "https://covid19.who.int/"),
+
+   Source("Gouvernement", "informations officielles CORONAVIRUS", 
+   "https://upload.wikimedia.org/wikipedia/fr/thumb/7/72/Logo_du_Gouvernement_de_la_R%C3%A9publique_fran%C3%A7aise_%282020%29.svg/280px-Logo_du_Gouvernement_de_la_R%C3%A9publique_fran%C3%A7aise_%282020%29.svg.png", 
+   "https://www.gouvernement.fr/info-coronavirus"),
+   Source("sante publique france", " ", 
+   "https://upload.wikimedia.org/wikipedia/fr/thumb/5/50/Sante-publique-France-logo.svg/1200px-Sante-publique-France-logo.svg.png", 
+   "https://www.santepubliquefrance.fr/maladies-et-traumatismes/maladies-et-infections-respiratoires/infection-a-coronavirus/articles/infection-au-nouveau-coronavirus-sars-cov-2-covid-19-france-et-monde")
+ ];
 
 class Sortie {
   String name;
