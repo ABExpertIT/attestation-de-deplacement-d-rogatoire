@@ -44,8 +44,6 @@ app to generate the derogatory travel certificate and get updates from trusted r
 </div>
 
 <div style="background-color:rgb(169,169,169); text-align:center">
-<img src="Screenshots/flutter_06.png" width="300" style="border-radius: 15px">
-&nbsp;
 <img src="Screenshots/flutter_07.png" width="300" style="border-radius: 15px">
 </div>
 
